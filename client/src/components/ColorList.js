@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 
 
@@ -31,11 +31,11 @@ const ColorList = ({ colors, updateColors }) => {
       .put(`http://localhost:5000/api/colors/${params.id}`, colorToEdit)
     .then((res) => {
         console.log(res.data)
-        return res.data
         history.push("/protected");
+        return res.data
         
       })
-    .catch((err) => console.error(err.message));
+    .catch((err) => console.error(err));
 
     // Make a put request to save your updated color
     // think about where will you get the id from...
@@ -48,8 +48,8 @@ const ColorList = ({ colors, updateColors }) => {
       .delete(`http://localhost:5000/api/colors/${params.id}`)
       .then((res) => {
         console.log(res.data)
-        return res.data
         history.push("/protected");
+        return res.data
       })
       .catch((err) => console.log(err));
     // make a delete request to delete this color
@@ -103,7 +103,7 @@ const ColorList = ({ colors, updateColors }) => {
             />
           </label>
           <div className="button-row">
-            <button type="submit">save</button>
+            <button onClick={saveEdit} type="submit">save</button>
             <button onClick={() => setEditing(false)}>cancel</button>
           </div>
         </form>
