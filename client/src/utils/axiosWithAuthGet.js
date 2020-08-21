@@ -1,13 +1,9 @@
 import axios from "axios";
+import { axiosWithAuth } from "./axiosWithAuth";
 
 
 export const axiosWithAuthGet = () => {
-  return axios.create({
-    baseURL: "http://localhost:5000",
-    headers: {
-      Authorization: JSON.parse(localStorage.getItem("token"))
-    }
-  })
+  return axiosWithAuth()
   .get('/api/colors')
       .then(res => {
         return res.data

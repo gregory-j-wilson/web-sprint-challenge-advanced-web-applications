@@ -10,6 +10,8 @@ const initialFormValues = {
 
 const Login = () => {
 
+  const history = useHistory()
+
   const [formValues, setFormValues] = useState(initialFormValues)
 
 
@@ -20,7 +22,7 @@ const Login = () => {
         });
       };
 
-      const history = useHistory()
+     
 
 
       const login = (e) => {

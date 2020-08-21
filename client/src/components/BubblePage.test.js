@@ -1,11 +1,15 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, act } from "@testing-library/react";
 import BubblePage from "./BubblePage";
-
 import {axiosWithAuthGet as mockAxiosWithAuthGet} from '../utils/axiosWithAuthGet'
 import {axiosWithAuth as mockAxiosWithAuth} from '../utils/axiosWithAuth'
+import Login from "./Login";
 
-
+jest.mock('react-router-dom', () => ({
+  useHistory: () => ({
+    push: jest.fn(),
+  }),
+}));
 
 jest.mock('../utils/axiosWithAuthGet')
 
@@ -94,9 +98,12 @@ const colorData = [
 
 test("Fetches data and renders the bubbles", async () => {
 
-  mockAxiosWithAuthGet.mockResolvedValueOnce(colorData)
+  
 
-  render(<BubblePage />)
+  mockAxiosWithAuthGet.mockResolvedValueOnce(colorData)
+ 
+  await act(async () => await render(<BubblePage />));
+
 
   await waitFor (() => {
 

@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
-import { useHistory } from "react-router-dom";
+// import { useParams } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
+import { axiosWithAuthGet } from "../utils/axiosWithAuthGet"
 
 
 
@@ -12,6 +13,11 @@ const initialColor = {
 };
 
 const ColorList = ({ colors, updateColors }) => {
+
+  // const history = useHistory()
+
+  // const params = useParams();
+
   // console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
@@ -21,26 +27,9 @@ const ColorList = ({ colors, updateColors }) => {
     setColorToEdit(color);
   };
 
-  const history = useHistory()
+  
 
-  const params = useParams();
-
-  const saveEdit = e => {
-    e.preventDefault();
-    axiosWithAuth()
-      .put(`http://localhost:5000/api/colors/${params.id}`, colorToEdit)
-    .then((res) => {
-        console.log(res.data)
-        // history.push("/protected");
-        return res.data
-        
-      })
-    .catch((err) => console.error(err));
-
-    // Make a put request to save your updated color
-    // think about where will you get the id from...
-    // where is it saved right now?
-  };
+ 
 
   const deleteColor = color => { 
 
@@ -48,11 +37,51 @@ const ColorList = ({ colors, updateColors }) => {
       .delete(`http://localhost:5000/api/colors/${color.id}`)
       .then((res) => {
         console.log(res.data)
-        history.push("/protected");
-        return res.data
+
+        // history.push("/protected");
+        // return res.data
       })
       .catch((err) => console.log(err));
     // make a delete request to delete this color
+      console.log(colors)
+  };
+
+  useEffect(() => {
+    axiosWithAuth()
+      .get('/api/colors')
+      .then(res => {
+        updateColors(res.data)
+      })
+  }, [])
+
+
+
+  const saveEdit = e => {
+    e.preventDefault();
+    e.persist()
+    axiosWithAuth()
+      .put(`http://localhost:5000/api/colors/${colorToEdit.id}`, colorToEdit)
+    .then((res) => {
+        console.log(res.data)
+        // history.push("/protected");
+        return updateColors(colors.map((color) => {
+          if (res.data.id == color.id) {
+            //  console.log(color)
+              return res.data
+          } else {
+              return color
+          }
+          
+      }))
+        
+      })
+    .catch((err) => console.error(err));
+
+    // console.log(colors)
+
+    // Make a put request to save your updated color
+    // think about where will you get the id from...
+    // where is it saved right now?
   };
 
   return (
