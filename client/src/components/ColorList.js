@@ -31,7 +31,7 @@ const ColorList = ({ colors, updateColors }) => {
       .put(`http://localhost:5000/api/colors/${params.id}`, colorToEdit)
     .then((res) => {
         console.log(res.data)
-        history.push("/protected");
+        // history.push("/protected");
         return res.data
         
       })
@@ -42,10 +42,10 @@ const ColorList = ({ colors, updateColors }) => {
     // where is it saved right now?
   };
 
-  const deleteColor = color => {
+  const deleteColor = color => { 
 
     axiosWithAuth()
-      .delete(`http://localhost:5000/api/colors/${params.id}`)
+      .delete(`http://localhost:5000/api/colors/${color.id}`)
       .then((res) => {
         console.log(res.data)
         history.push("/protected");
