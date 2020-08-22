@@ -1,5 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+// import { useParams } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
+import { axiosWithAuth } from "../utils/axiosWithAuth";
+import { axiosWithAuthGet } from "../utils/axiosWithAuthGet"
+
+
 
 const initialColor = {
   color: "",
@@ -7,7 +13,12 @@ const initialColor = {
 };
 
 const ColorList = ({ colors, updateColors }) => {
-  console.log(colors);
+
+  // const history = useHistory()
+
+  // const params = useParams();
+
+  // console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
 
@@ -16,15 +27,61 @@ const ColorList = ({ colors, updateColors }) => {
     setColorToEdit(color);
   };
 
-  const saveEdit = e => {
-    e.preventDefault();
-    // Make a put request to save your updated color
-    // think about where will you get the id from...
-    // where is is saved right now?
+  
+
+ 
+
+  const deleteColor = color => { 
+
+    axiosWithAuth()
+      .delete(`http://localhost:5000/api/colors/${color.id}`)
+      .then((res) => {
+        console.log(res.data)
+
+        // history.push("/protected");
+        // return res.data
+      })
+      .catch((err) => console.log(err));
+    // make a delete request to delete this color
+      console.log(colors)
   };
 
-  const deleteColor = color => {
-    // make a delete request to delete this color
+  useEffect(() => {
+    axiosWithAuth()
+      .get('/api/colors')
+      .then(res => {
+        updateColors(res.data)
+      })
+  }, [])
+
+
+
+  const saveEdit = e => {
+    e.preventDefault();
+    e.persist()
+    axiosWithAuth()
+      .put(`http://localhost:5000/api/colors/${colorToEdit.id}`, colorToEdit)
+    .then((res) => {
+        console.log(res.data)
+        // history.push("/protected");
+        return updateColors(colors.map((color) => {
+          if (res.data.id == color.id) {
+            //  console.log(color)
+              return res.data
+          } else {
+              return color
+          }
+          
+      }))
+        
+      })
+    .catch((err) => console.error(err));
+
+    // console.log(colors)
+
+    // Make a put request to save your updated color
+    // think about where will you get the id from...
+    // where is it saved right now?
   };
 
   return (
@@ -75,7 +132,7 @@ const ColorList = ({ colors, updateColors }) => {
             />
           </label>
           <div className="button-row">
-            <button type="submit">save</button>
+            <button onClick={saveEdit} type="submit">save</button>
             <button onClick={() => setEditing(false)}>cancel</button>
           </div>
         </form>
